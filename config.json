@@ -1,0 +1,14 @@
+{
+  "redis": {
+    "address": "localhost:6379",
+    "password": "",
+    "defaultDb": 0
+  },
+  "Kafka" : {
+    "Config": [
+      { "bootstrap.servers" : "localhost:9092"}
+    ],
+    "AdditionalSettings" : ""
+  }
+}
+}
