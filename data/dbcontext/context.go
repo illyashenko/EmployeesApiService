@@ -38,7 +38,7 @@ func (receiver *RedisClient) GetAllKeys() *redis.Cmd {
 	return receiver.client.Do(receiver.ctx, "KEYS", "*")
 }
 
-func (receiver *RedisClient) Subscribe(pattern string, kafkaMq mq.KafkaMq) {
+func (receiver *RedisClient) Subscribe(pattern string, kafkaMq mq.KafkaMq, topics []string) {
 	sub := receiver.client.PSubscribe(receiver.ctx, pattern)
 	for {
 		messages, err := sub.Receive(receiver.ctx)
@@ -46,18 +46,23 @@ func (receiver *RedisClient) Subscribe(pattern string, kafkaMq mq.KafkaMq) {
 			break
 		}
 		if messages != nil {
-			switch messages.(type) {
+			switch msg := messages.(type) {
 			case *redis.Message:
-				topic := "samokat"
-				key := fmt.Sprintf("%v", messages)
+				key := fmt.Sprintf("%v", msg.Payload)
 				val, _ := receiver.Get(key).Result()
 
-				msg := kafka.Message{
-					TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-					Key:            []byte(key),
-					Value:          []byte(val),
+				for _, topic := range topics {
+					message := kafka.Message{
+						TopicPartition: kafka.TopicPartition{
+							Topic:     &topic,
+							Partition: kafka.PartitionAny,
+						},
+						Key:   []byte(key),
+						Value: []byte(val),
+					}
+					kafkaMq.SendMassages(message)
 				}
-				kafkaMq.SendMassages(msg)
+
 			}
 		}
 	}

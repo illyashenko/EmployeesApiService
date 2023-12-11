@@ -13,7 +13,9 @@ func main() {
 	config := appconfig.NewConfig()
 	context := dbcontext.RedisContext(config.RedisConfig)
 
-	go context.Subscribe("__key*__:set", mq.NewKafkaProducer(config.KafkaMq))
+	go context.Subscribe("__key*__:set",
+		mq.NewKafkaProducer(config.KafkaMq),
+		config.KafkaMq.Topics)
 
 	server := httpServer.NewServer(&stores.RedisStore{Redis: &context})
 	server.Start()

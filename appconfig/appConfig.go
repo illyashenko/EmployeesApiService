@@ -20,6 +20,7 @@ type AppConfig struct {
 type KafkaConfig struct {
 	Config             []map[string]string `json:"Config"`
 	AdditionalSettings string              `json:"AdditionalSettings"`
+	Topics             []string            `json:"Topics"`
 }
 
 func (config *AppConfig) configure() {

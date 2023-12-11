@@ -21,7 +21,7 @@ func NewServer(store *stores.RedisStore) HttpServer {
 }
 
 func (receiver HttpServer) Start() {
-	err := receiver.router.Run(":8080")
+	err := receiver.router.Run(":5000")
 	if err != nil {
 		log.Panic(err.Error())
 	}
