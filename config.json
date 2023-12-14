@@ -4,13 +4,14 @@
     "password": "",
     "defaultDb": 0
   },
-  "Kafka" : {
-    "Config": [
+  "kafka" : {
+    "config": [
       { "bootstrap.servers" : "localhost:9092"}
     ],
-    "Topics" : [
+    "topics" : [
       "employee"
     ],
-    "AdditionalSettings" : ""
-  }
+    "additionalSettings" : ""
+  },
+  "useRedisEvents" : true
 }

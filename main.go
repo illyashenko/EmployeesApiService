@@ -4,7 +4,7 @@ import (
 	"EmployeesApiService/appconfig"
 	"EmployeesApiService/data/dbcontext"
 	"EmployeesApiService/data/stores"
-	"EmployeesApiService/mq"
+	"EmployeesApiService/services/eventService"
 	"EmployeesApiService/services/httpServer"
 )
 
@@ -13,10 +13,9 @@ func main() {
 	config := appconfig.NewConfig()
 	context := dbcontext.RedisContext(config.RedisConfig)
 
-	go context.Subscribe("__key*__:set",
-		mq.NewKafkaProducer(config.KafkaMq),
-		config.KafkaMq.Topics)
+	if config.UseRedisEvents {
+		go eventService.NewEventService(&stores.RedisStore{Redis: &context}, config.KafkaMq).Start()
+	}
 
-	server := httpServer.NewServer(&stores.RedisStore{Redis: &context})
-	server.Start()
+	httpServer.NewServer(&stores.RedisStore{Redis: &context}).Start()
 }

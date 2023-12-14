@@ -13,14 +13,15 @@ type RedisConfig struct {
 }
 
 type AppConfig struct {
-	RedisConfig RedisConfig `json:"redis"`
-	KafkaMq     KafkaConfig `json:"kafka"`
+	RedisConfig    RedisConfig `json:"redis"`
+	KafkaMq        KafkaConfig `json:"kafka"`
+	UseRedisEvents bool        `json:"useRedisEvents"`
 }
 
 type KafkaConfig struct {
-	Config             []map[string]string `json:"Config"`
-	AdditionalSettings string              `json:"AdditionalSettings"`
-	Topics             []string            `json:"Topics"`
+	Config             []map[string]string `json:"config"`
+	AdditionalSettings string              `json:"additionalSettings"`
+	Topics             []string            `json:"topics"`
 }
 
 func (config *AppConfig) configure() {

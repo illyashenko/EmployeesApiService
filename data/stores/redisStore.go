@@ -3,8 +3,11 @@ package stores
 import (
 	"EmployeesApiService/data/dbcontext"
 	"EmployeesApiService/models"
+	"EmployeesApiService/mq"
 	"encoding/json"
 	"fmt"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/redis/go-redis/v9"
 	"reflect"
 )
 
@@ -29,7 +32,7 @@ func (receiver *RedisStore) Employees() ([]models.Employee, error) {
 	}
 	var employees []models.Employee
 	if reflect.TypeOf(value).Kind() == reflect.Slice {
-		for key, _ := range value {
+		for key := range value {
 			employee, errJson := receiver.Employee(fmt.Sprintf("%v", value[key]))
 
 			if errJson != nil {
@@ -39,4 +42,36 @@ func (receiver *RedisStore) Employees() ([]models.Employee, error) {
 		}
 	}
 	return employees, err
+}
+
+func (receiver *RedisStore) SubscribeSetKeyEvents(mqKafka mq.KafkaMq, topics []string) {
+
+	subscriber := receiver.Redis.Subscribe("__key*__:set")
+
+	for {
+		messages, err := subscriber.Receive(receiver.Redis.Context)
+		if err != nil {
+			break
+		}
+		if messages != nil {
+			switch msg := messages.(type) {
+			case *redis.Message:
+				key := fmt.Sprintf("%v", msg.Payload)
+				val, _ := receiver.Redis.Get(key).Result()
+
+				for _, topic := range topics {
+					message := kafka.Message{
+						TopicPartition: kafka.TopicPartition{
+							Topic:     &topic,
+							Partition: kafka.PartitionAny,
+						},
+						Key:   []byte(key),
+						Value: []byte(val),
+					}
+					mqKafka.SendMassages(message)
+				}
+
+			}
+		}
+	}
 }
