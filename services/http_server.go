@@ -1,7 +1,7 @@
-package httpServer
+package services
 
 import (
-	"EmployeesApiService/data/stores"
+	"EmployeesApiService/data"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -9,10 +9,10 @@ import (
 
 type HttpServer struct {
 	router *gin.Engine
-	store  *stores.RedisStore
+	store  *data.RedisStore
 }
 
-func NewServer(store *stores.RedisStore) HttpServer {
+func NewServer(store *data.RedisStore) HttpServer {
 
 	router := gin.Default()
 	initController(router, store)
@@ -27,12 +27,12 @@ func (receiver HttpServer) Start() {
 	}
 }
 
-func initController(router *gin.Engine, store *stores.RedisStore) {
+func initController(router *gin.Engine, store *data.RedisStore) {
 
 	router.GET("/employees/", func(cnx *gin.Context) {
 		employees, err := store.Employees()
 		if err != nil {
-			cnx.JSON(http.StatusNotFound, err)
+			cnx.JSON(http.StatusInternalServerError, err)
 		} else {
 			cnx.JSON(http.StatusOK, employees)
 		}

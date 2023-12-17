@@ -1,4 +1,4 @@
-package appconfig
+package configs
 
 import (
 	"encoding/json"
@@ -26,14 +26,11 @@ type KafkaConfig struct {
 
 func (config *AppConfig) configure() {
 
-	data, err := os.ReadFile("config.json")
-
+	data, err := os.ReadFile(configPath(os.Getenv("APP_ENV")))
 	if err != nil {
 		log.Fatal("Config file reading error", err)
 	}
-
 	err = json.Unmarshal(data, config)
-
 	if err != nil {
 		log.Fatal("Config json deserialization error", err)
 	}
@@ -45,4 +42,12 @@ func NewConfig() AppConfig {
 	appConfig.configure()
 
 	return appConfig
+}
+
+func configPath(env string) string {
+	if env == "docker" {
+		return "config-docker.json"
+	} else {
+		return "config-develop.json"
+	}
 }

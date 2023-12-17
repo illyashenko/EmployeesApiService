@@ -1,7 +1,7 @@
 package mq
 
 import (
-	"EmployeesApiService/appconfig"
+	"EmployeesApiService/configs"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"log"
 )
@@ -10,7 +10,7 @@ type KafkaMq struct {
 	Producer *kafka.Producer
 }
 
-func NewKafkaProducer(config appconfig.KafkaConfig) KafkaMq {
+func NewKafkaProducer(config configs.KafkaConfig) KafkaMq {
 
 	producer, err := kafka.NewProducer(configure(config))
 
@@ -21,7 +21,7 @@ func NewKafkaProducer(config appconfig.KafkaConfig) KafkaMq {
 	return KafkaMq{Producer: producer}
 }
 
-func configure(config appconfig.KafkaConfig) *kafka.ConfigMap {
+func configure(config configs.KafkaConfig) *kafka.ConfigMap {
 
 	kafkaConfig := kafka.ConfigMap{}
 
