@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: api-employees
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5000"
+    depends_on:
+      - storage
+    links:
+      - storage
+    restart: always
+
+  storage:
+    image: "redis:latest"
+    container_name: redis-storage
+    restart: always
+    ports:
+      - "63791:6379"

@@ -1,0 +1,17 @@
+{
+  "redis": {
+    "address": "storage:6379",
+    "password": "",
+    "defaultDb": 0
+  },
+  "kafka" : {
+    "config": [
+      { "bootstrap.servers" : "localhost:9092"}
+    ],
+    "topics" : [
+      "employee"
+    ],
+    "additionalSettings" : ""
+  },
+  "useRedisEvents" : true
+}

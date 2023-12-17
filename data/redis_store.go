@@ -1,7 +1,6 @@
-package stores
+package data
 
 import (
-	"EmployeesApiService/data/dbcontext"
 	"EmployeesApiService/models"
 	"EmployeesApiService/mq"
 	"encoding/json"
@@ -12,7 +11,7 @@ import (
 )
 
 type RedisStore struct {
-	Redis *dbcontext.RedisClient
+	Redis *RedisClient
 }
 
 func (receiver *RedisStore) Employee(key string) (models.Employee, error) {
@@ -31,7 +30,7 @@ func (receiver *RedisStore) Employees() ([]models.Employee, error) {
 		return nil, err
 	}
 	var employees []models.Employee
-	if reflect.TypeOf(value).Kind() == reflect.Slice {
+	if reflect.TypeOf(value).Kind() == reflect.Slice && len(value) > 0 {
 		for key := range value {
 			employee, errJson := receiver.Employee(fmt.Sprintf("%v", value[key]))
 

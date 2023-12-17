@@ -1,7 +1,7 @@
-package dbcontext
+package data
 
 import (
-	"EmployeesApiService/appconfig"
+	"EmployeesApiService/configs"
 	"context"
 	"github.com/redis/go-redis/v9"
 	"time"
@@ -12,7 +12,7 @@ type RedisClient struct {
 	Context context.Context
 }
 
-func RedisContext(config appconfig.RedisConfig) RedisClient {
+func RedisContext(config configs.RedisConfig) RedisClient {
 	return RedisClient{
 		client: redis.NewClient(&redis.Options{
 			Addr:     config.Address,

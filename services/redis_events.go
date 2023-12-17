@@ -1,18 +1,18 @@
-package eventService
+package services
 
 import (
-	"EmployeesApiService/appconfig"
-	"EmployeesApiService/data/stores"
+	"EmployeesApiService/configs"
+	"EmployeesApiService/data"
 	"EmployeesApiService/mq"
 )
 
 type EventService struct {
 	mqKafka mq.KafkaMq
-	store   *stores.RedisStore
-	config  appconfig.KafkaConfig
+	store   *data.RedisStore
+	config  configs.KafkaConfig
 }
 
-func NewEventService(store *stores.RedisStore, config appconfig.KafkaConfig) EventService {
+func NewEventService(store *data.RedisStore, config configs.KafkaConfig) EventService {
 	return EventService{
 		store:   store,
 		config:  config,
